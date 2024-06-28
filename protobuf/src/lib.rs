@@ -90,7 +90,7 @@ pub mod atomic_flags;
 
 // so `use protobuf::*` could work in mod descriptor and well_known_types
 mod protobuf {
-    pub use atomic_flags::set_redact_bytes;
+    pub use atomic_flags::set_redact_level;
     pub use cached_size::CachedSize;
     pub use clear::Clear;
     pub use core::*;

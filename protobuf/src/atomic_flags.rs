@@ -1,13 +1,28 @@
 //! Library to configure runtime configurations
 
-use std::sync::atomic::AtomicBool;
+use atomic::Atomic;
 use std::sync::atomic::Ordering;
 
-/// If `REDACT_BYTES` is set, all bytes and strings will be
-/// formatted as "?"
-pub(crate) static REDACT_BYTES: AtomicBool = AtomicBool::new(false);
+pub const DEFAULT_REDACT_MARKER_HEAD: &str = "‹";
+pub const DEFAULT_REDACT_MARKER_TAIL: &str = "›";
 
-/// Set redact bytes.
-pub fn set_redact_bytes(redact_bytes: bool) {
-    REDACT_BYTES.store(redact_bytes, Ordering::Relaxed);
+/// RedactLevel is used to control the redaction of log data.
+///
+/// Default is `Off`, means no redaction. And `Marker` is a
+/// special flag used to dedact the raw data.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[repr(u8)]
+pub enum RedactLevel {
+    Off,
+    On,
+    Marker, // flag is ‹..›
+}
+
+/// If `REDACT_LEVEL` is set, all bytes and strings will be
+/// formatted as "?"
+pub(crate) static REDACT_LEVEL: Atomic<RedactLevel> = Atomic::new(RedactLevel::Off);
+
+/// Set redact level.
+pub fn set_redact_level(redact_level: RedactLevel) {
+    REDACT_LEVEL.store(redact_level, Ordering::Relaxed);
 }
